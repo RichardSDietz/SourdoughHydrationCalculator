@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SourdoughHydrationHelper">
         <activity
+            android:name=".Directions"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

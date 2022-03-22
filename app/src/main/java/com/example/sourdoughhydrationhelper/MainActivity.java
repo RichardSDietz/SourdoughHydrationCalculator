@@ -1,9 +1,12 @@
 package com.example.sourdoughhydrationhelper;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -14,7 +17,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Spinner doughTypeSpinner;
+    public static final String DOUGHTYPE_TEXT = "com.example.sourdoughhydrationhelper.doughType";
+    public Spinner doughTypeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<DoughType> adapter = new ArrayAdapter<DoughType>(this, android.R.layout.simple_spinner_dropdown_item, doughTypeList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         doughTypeSpinner.setAdapter(adapter);
+
+        //Directions button functionality
+        configureDirectionsButton();
     }
 
     public void calculateHydration(View view)   {
@@ -70,6 +77,33 @@ public class MainActivity extends AppCompatActivity {
                 starterCalcText.setText(String.format(Locale.ENGLISH, "%.0f", starterAmountF));
                 saltCalcText.setText(String.format(Locale.ENGLISH, "%.0f", saltAmountF));
             }
+            if(selectedDoughType.equals("Bagels")){
+                String flourAmountS = flourText.getText().toString();
+                Float flourAmountF = Float.parseFloat(flourAmountS);
+                String hydrationPercS = hydrationText.getText().toString();
+                Float hydrationPercF = Float.parseFloat(hydrationPercS);
+                Float starterAmountF = flourAmountF * .26f;
+                Float waterAmountF = ((flourAmountF + (starterAmountF / 2)) * (hydrationPercF / 100)) - (starterAmountF / 2);
+                Float saltAmountF = (flourAmountF + (starterAmountF / 2)) * .01f;
+                flourCalcText.setText(String.format(Locale.ENGLISH, "%.0f", flourAmountF));
+                waterCalcText.setText(String.format(Locale.ENGLISH, "%.0f", waterAmountF));
+                starterCalcText.setText(String.format(Locale.ENGLISH, "%.0f", starterAmountF));
+                saltCalcText.setText(String.format(Locale.ENGLISH, "%.0f", saltAmountF));
+            }
         }
     }
+
+    private void configureDirectionsButton(){
+        Button directionsButton = (Button) findViewById(R.id.directionsButton);
+        directionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                Intent directionsIntent = new Intent(MainActivity.this, Directions.class);
+                String doughType = doughTypeSpinner.getSelectedItem().toString();
+                directionsIntent.putExtra(DOUGHTYPE_TEXT, doughType);
+                startActivity(directionsIntent);
+            }
+        });
+    }
+
 }
